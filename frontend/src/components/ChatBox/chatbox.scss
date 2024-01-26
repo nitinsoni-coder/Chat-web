@@ -1,0 +1,36 @@
+@import "../../styles/variables.scss";
+
+.chatbox-container {
+  background-color: $darkestBlue;
+  width: 80%;
+  color: $white;
+  height: 90vh;
+  position: relative;
+
+  .messageContent {
+    background-color: $white;
+    color: $black;
+    padding: 10px;
+    border-radius: 10px;
+    width: 50%;
+    margin: 10px;
+  }
+
+  .chatForm {
+    position: absolute;
+    bottom: 0;
+  }
+
+  .messageInputField {
+    width: 70%;
+    height: 40px;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+  }
+
+  .sendBtn {
+    height: 40px;
+    padding: 10px;
+  }
+}
