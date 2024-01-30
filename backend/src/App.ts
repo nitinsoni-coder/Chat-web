@@ -1,9 +1,10 @@
 import cookieParser from "cookie-parser";
-import { Server } from "socket.io";
-import { createServer } from "http";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 import connectToDB from "./db/connection";
 import config from "./config/index";
@@ -12,26 +13,37 @@ import Router from "./Router";
 const app = express();
 
 // normal middleware
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
-app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.json({ limit: "16kb" }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: config.REACT_APP_BASE_URL,
     credentials: true,
   })
 );
-
-//connection to database
-connectToDB();
 
 //socket.io configuration
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3001",
+    origin: config.REACT_APP_BASE_URL,
   },
+});
+
+//connection to database
+connectToDB().then(() => {
+  // To handle error if express get crashed.
+  server.on("error", (error) => {
+    console.log("ERR : ", error);
+    throw error;
+  });
+
+  // listening on port
+  server.listen(config.PORT, () => {
+    console.log(`⚙️  server is listening on port ${config.PORT}`);
+  });
 });
 
 io.on("connection", (socket) => {
@@ -60,7 +72,3 @@ io.on("connection", (socket) => {
 });
 
 app.use("/api/v1", Router);
-
-server.listen(config.PORT, () => {
-  console.log(`⚙️  server is listening on port ${config.PORT}`);
-});

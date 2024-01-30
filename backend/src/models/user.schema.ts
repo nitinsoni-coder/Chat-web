@@ -3,17 +3,14 @@ import bcrypt from "bcrypt";
 import JWT from "jsonwebtoken";
 
 import { AvailableUserRoles, UserRolesEnum } from "../constants/globalConstant";
+import config from "../config/index";
 
 const userSchema = new Schema(
   {
     avatar: {
-      type: {
-        url: String,
-        localPath: String,
-      },
-      default: {
-        url: `https://via.placeholder.com/200x200.png`,
-        localPath: "",
+      publicUrl: {
+        type: String,
+        default: `https://via.placeholder.com/200x200.png`,
       },
     },
     username: {
@@ -54,7 +51,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+userSchema.methods.isPasswordCorrect = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
@@ -64,8 +61,8 @@ userSchema.methods.generateAccessToken = function () {
       _id: this._id,
       email: this.email,
     },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    config.ACCESS_TOKEN_SECRET,
+    { expiresIn: config.ACCESS_TOKEN_EXPIRY }
   );
 };
 
@@ -74,8 +71,8 @@ userSchema.methods.generateRefreshToken = function () {
     {
       _id: this._id,
     },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+    config.REFRESH_TOKEN_SECRET,
+    { expiresIn: config.REFRESH_TOKEN_EXPIRY }
   );
 };
 
