@@ -11,3 +11,5 @@ class ApiResponse {
     this.data = data;
   }
 }
+
+export default ApiResponse;

@@ -5,7 +5,7 @@ const asyncHandler =
   async (req: Request, res: Response, next: NextFunction) => {
     console.log("Triggered endpoint", req.originalUrl);
     try {
-      await func(req, res, next);
+      return await func(req, res, next);
     } catch (error) {
       console.log("Error handler", error);
       res.status(error.code || 500).json({

@@ -4,6 +4,7 @@ import JWT from "jsonwebtoken";
 
 import { AvailableUserRoles, UserRolesEnum } from "../constants/globalConstant";
 import config from "../config/index";
+import { UserSchema } from "../interfaces/schemaInterfaces";
 
 const userSchema = new Schema(
   {
@@ -51,7 +52,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (password: string) {
+userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
@@ -76,6 +77,6 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-const User = model("users", userSchema);
+const User = model<UserSchema>("users", userSchema);
 
 export default User;
